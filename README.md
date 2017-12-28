@@ -1,5 +1,5 @@
 # PostgreSQL
-PostgreSQL code
+PostgreSQL scripts
 
 ## PosgreSQL Functions
 - Nemeric Functions
