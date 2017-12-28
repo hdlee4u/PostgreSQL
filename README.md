@@ -1,5 +1,5 @@
 # PostgreSQL
-PostgreSQL ocde
+PostgreSQL code
 
 ## PosgreSQL Functions
 - Nemeric Functions
