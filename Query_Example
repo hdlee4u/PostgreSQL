@@ -1,0 +1,582 @@
+-- CREATE TABLE
+DROP TABLE COMPANY;
+CREATE TABLE COMPANY (
+	ID	INT	NOT NULL, 
+	NAME	TEXT	NOT NULL, 
+	AGE	INT	NOT NULL, 
+	ADDRESS	CHAR(50), 
+	SALARY	REAL, 
+	JOIN_DATE 	DATE, 
+	PRIMARY KEY(ID)
+);
+
+-- INSERT QUERY
+INSERT INTO COMPANY (ID, NAME, AGE, ADDRESS, SALARY, JOIN_DATE) VALUES 
+(1, 'Paul', 32, 'California', 20000.00, '2001-07-13'), 
+(2, 'Allen', 25, 'Texas', DEFAULT, '2007-12-13'), 
+(3, 'Teddy', 23, 'Norway', 20000.0, DEFAULT), 
+(4, 'Mark', 25, 'Rich-Mond', 65000.0, '2017-12-13'), 
+(5, 'David', 27, 'Texas', 85000.0, '2007-12-13');
+
+INSERT INTO COMPANY VALUES (6, 'KIM', 22, 'SOUTH-HALL', 45000), (7, 'JAMES', 24, 'HOUSTON', 10000)
+
+-- Arithmetic Operators
+select 2+3;
+select 2-3;
+select 2*3;
+select 2/3;
+select 2%3;
+select 2^3;
+select |/25.0;
+||/27.9;
+select 5!;
+select !!5;
+
+-- Comparison Operators
+select * from COMPANY;
+
+SELECT * FROM COMPANY WHERE SALARY > 50000;
+SELECT * FROM COMPANY WHERE SALARY = 20000;
+SELECT * FROM COMPANY WHERE SALARY != 20000;
+SELECT * FROM COMPANY WHERE SALARY <> 20000;
+SELECT * FROM COMPANY WHERE SALARY >= 65000;
+
+-- LOGICAL OPERTORS
+SELECT * FROM COMPANY WHERE AGE >= 25 AND SALARY >= 65000;
+SELECT * FROM COMPANY WHERE AGE >= 25 OR SALARY >= 65000;
+SELECT * FROM COMPANY WHERE SALARY IS NOT NULL;
+
+-- POSTGRESQL EXPRESSIONS
+-- BOOLEAN EXPRESSION
+SELECT * FROM COMPANY WHERE SALARY = 20000;
+
+-- NUMERIC EXPRESSION
+SELECT (5 + 6) AS ADDITION;
+
+SELECT COUNT(*) AS "RECORDS" FROM COMPANY;
+SELECT COUNT(*) AS RECORDS_2 FROM COMPANY;
+
+SELECT CURRENT_TIMESTAMP;
+
+-- WHERE CLAUSE
+SELECT * FROM COMPANY;
+SELECT * FROM COMPANY WHERE AGE >= 25 AND SALARY >= 65000;
+SELECT * FROM COMPANY WHERE AGE >= 25 OR SALARY >= 65000;
+SELECT * FROM COMPANY WHERE AGE IS NOT NULL;
+SELECT * FROM COMPANY WHERE NAME LIKE 'JA%';
+SELECT * FROM COMPANY WHERE ADDRESS LIKE '%ON%';
+SELECT * FROM COMPANY WHERE NAME LIKE '%IM';
+SELECT * FROM COMPANY WHERE AGE IN (25, 27);
+SELECT * FROM COMPANY WHERE AGE NOT IN (25, 27);
+SELECT * FROM COMPANY WHERE AGE BETWEEN 25 AND 27;
+SELECT AGE FROM COMPANY WHERE EXISTS (SELECT AGE FROM COMPANY WHERE SALARY > 65000);
+SELECT AGE FROM COMPANY WHERE AGE > (SELECT AGE FROM COMPANY WHERE SALARY > 65000);
+
+-- AND & OR CONJUNCTIVE OPERATORS
+SELECT * FROM COMPANY;
+SELECT * FROM COMPANY WHERE AGE >= 25 AND SALARY >= 65000;
+SELECT * FROM COMPANY WHERE AGE >= 25 OR SALARY >= 65000;
+
+-- UPDATE QUERY
+SELECT * FROM COMPANY;
+UPDATE COMPANY SET SALARY = 15000 WHERE ID = 3;
+SELECT * FROM COMPANY ORDER BY ID;
+
+
+-- DELETE QUERY
+DELETE FROM COMPANY WHERE ID = 3;
+SELECT * FROM COMPANY;
+
+-- LIKE CLAUSE
+SELECT * FROM COMPANY WHERE SALARY::TEXT LIKE '200%'
+SELECT * FROM COMPANY WHERE SALARY::TEXT LIKE '_00%';
+SELECT * FROM COMPANY WHERE ADDRESS LIKE ('%-%')
+
+-- limit clause
+select * from company limit 2 offset 2;
+select * from company limit 2 offset 3;
+select * from company limit 2 offset 4;
+
+-- order by clause
+select * from company;
+select * from company order by age asc;
+select * from company order by age desc;
+select * from company order by name, salary asc;
+select * from company order by name desc;
+
+-- group by
+select * from company;
+select name, sum(salary) from company group by name;
+
+insert into company values(8, 'Paul', 24, 'Houston', 20000);
+insert into company values(9, 'JAMES', 44, 'Norway', 5000);
+insert into company values(10, 'JAMES', 45, 'Texas', 5000);
+
+select name, sum(salary) as salary_sum from company group by name;
+
+select name, sum(salary) as sal_sum from company group by name order by sal_sum desc;
+
+-- with clause
+select * from company;
+
+update company set salary = 15000 where id = 2;
+
+select * from company;
+
+select * from company order by id asc;
+
+with CTE AS 
+    (
+    select 
+    ID, 
+    NAME, 
+    AGE, 
+    ADDRESS, 
+    SALARY
+    from company
+    ) 
+    select * from CTE;
+
+
+with recursive t(n) as (
+	values (0)
+	union all
+	select salary from company where salary < 20000
+	)
+	select sum(n) from t; 
+
+create table company1 (
+	id int primary key not null, 
+	name text not null, 
+	age int not null, 
+	address char(50), 
+	salary real
+)
+
+with moved_rows as (
+	delete from company 
+	where
+		salary >= 30000
+	returning *
+)
+insert into company1 (select * from moved_rows);
+
+select * from company order by id;
+
+-- having clause
+select name from company group by name having count(name) < 2;
+
+select name from company group by name having count(name) > 1;
+
+-- subquery, inner query, nested query
+-- subquery with the select statement
+select * from company order by id;
+
+select * 
+    from company
+    where id in (select id from company where salary > 45000) ;
+
+-- subquery with the insert statement
+CREATE TABLE company_bkp
+(
+  id integer NOT NULL,
+  name text NOT NULL,
+  age integer NOT NULL,
+  address character(50),
+  salary real,
+  join_date date
+)
+
+insert into company_bkp
+    select * from company
+    where id IN (select id from company);
+
+select * from company_bkp;
+
+-- subquery with the update statement
+update company_bkp set salary = salary * 0.5
+    where age IN (select age from company where age >= 27);
+
+select * from company_bkp;
+
+-- subquery with the delete statement
+delete from company_bkp
+    where age IN (select age from company where age >= 27);
+
+select * from company_bkp;
+
+-- AUTO INCREMENT
+SELECT * FROM COMPANY;
+
+CREATE TABLE COMPANY_2 (
+    ID SERIAL PRIMARY KEY, 
+    NAME TEXT NOT NULL, 
+    AGE INT NOT NULL, 
+    ADDRESS CHAR(50), 
+    SALARY REAL
+);
+
+INSERT INTO COMPANY_2 (NAME, AGE, ADDRESS, SALARY) VALUES ('Paul', 32, 'California', 20000.00);
+insert into company_2 (name, age, address, salary) values ('Allen', 25, 'Texas', 15000.00);
+insert into company_2 (name, age, address, salary) values ('Teddy', 23, 'Norway', 20000.00);
+insert into company_2 (name, age, address, salary) values ('Mark', 25, 'Rich-Mond', 65000.00);
+insert into company_2 (name, age, address, salary) values ('David', 27, 'Texas', 85000.00);
+insert into company_2 (name, age, address, salary) values ('Kim', 22, 'South-Hall', 45000.00);
+insert into company_2 (name, age, address, salary) values ('James', 24, 'Houston', 10000.00);
+
+select * from company_2;
+
+-- PostgreSQL - PRIVILEGES ; grant, revoke
+create user manisha with password 'password';
+create ROLE
+
+select * from company_2;
+grant all on company_2 to manisha;
+
+revoke all on company_2 from manisha;
+revoke all on company from manisha;
+
+drop user manisha;
+
+
+-----------------------------
+-- DATE/TIME functions and operations
+select date '2017-12-10' + integer '7'
+select date '2017-12-01' + 7 as new_date
+select date '2017-12-01' + interval '2 hour' as date_interval;
+select date '2017-12-01' + time '03:00' as date_time;
+select interval '1 day' + interval '1 hour' as interval_interval;
+select timestamp '2017-12-10 01:00' + interval '23 hour' as timestamp_interval;
+select time '01:00' + interval '3 hour' as time_interval;
+select -interval '23 hour' as minus_interval;
+select date '2017-12-25' - date '2017-12-01' as minus_date;
+select date '2017-12-25' - int '7' as date_int_minus;
+select date '2017-12-25' - 7 as date_int_minus;
+select date '2017-12-25' - interval '1 hour' as date_interval_minus;
+select time '05:00' - time '03:00' as time_time_minus;
+select time '05:00' - interval '2 hours' as time_interval_minus;
+select timestamp '2017-12-25 23:00' - interval '23 hours' as timestamp_interval_minus;
+select interval '1 day' - interval '1 hour' as inverval_interval_minus;
+select timestamp '2017-12-25 23:00' - timestamp '2017-12-24 00:00' as timestamp_timestamp_minus;
+select 900*interval '1 second' as interval_muliply;
+select time '02:00' + 900*interval '1 second' as interval_min_mul;
+select 21*interval '1 day' as inteval_multiply;
+select double precision '4.6'*interval '1 hour' as interval_prec;
+select interval '1 hour'/double precision '1.5' as interval_div_prec;
+select interval '1 hour'/double precision '0.5';
+
+-- data and time related functions available
+select age(timestamp '2017-12-25', timestamp '2017-10-23');
+select age(timestamp '2017-11-01');
+
+-- current date/time()
+select current_date as current_date;
+select current_time as current_time;
+select current_date as curr_date, current_time as curr_time;
+select current_timestamp as curr_timestp;
+select current_time(2); -- with precision
+select current_time(4);
+select current_time(6);
+select current_timestamp(2);
+select current_timestamp(4);
+
+select localtime;
+select localtime(4);
+
+select localtimestamp;
+select localtimestamp(4);
+
+select transaction_timestamp();
+select statement_timestamp();
+select clock_timestamp();
+select timeofday();
+select now();
+select current_timestamp;
+
+-- date_part(text, timestamp)
+select date_part('year', timestamp '2017-12-26 18:10:50');
+select date_part('day', timestamp '2017-12-26 18:10:50');
+select date_part('hour', timestamp '2017-12-26 18:10:50');
+select date_part('minute', timestamp '2017-12-26 18:10:50');
+select date_part('second', timestamp '2017-12-26 18:10:50');
+
+-- date_part(text, interval)
+select date_part('hour', interval '4 hours 3 minutes');
+select date_part('minute', interval '4 hours 3 minutes');
+
+-- date_trunc(text, timestamp)
+select date_trunc('year', timestamp '2017-12-26 18:54:10');
+select date_trunc('month', timestamp '2017-12-26 18:54:10');
+select date_trunc('day', timestamp '2017-12-26 18:54:10');
+select date_trunc('hour', timestamp '2017-12-26 18:54:10');
+select date_trunc('minute', timestamp '2017-12-26 18:54:10');
+
+-- extract(field from timestamp)
+select extract(century from timestamp '2017-12-26 18:45:32');
+select extract(year from timestamp '2017-12-26 18:45:32');
+select extract(day from timestamp '2017-12-26 18:45:32');
+select extract(decade from timestamp '2017-12-26 18:45:32');
+select extract(dow from timestamp '2017-12-26 18:45:32');
+select extract(doy from timestamp '2017-12-26 18:45:32'); -- day of year
+select extract(epoch from timestamp '2017-12-26 18:45:32');
+select extract(hour from timestamp '2017-12-26 18:45:32');
+select extract(isodow from timestamp '2017-12-26 18:45:32');
+select extract(isoyear from timestamp '2017-12-26 18:45:32');
+select extract(microseconds from timestamp '2017-12-26 18:45:32');
+select extract(millennium from timestamp '2017-12-26 18:45:32');
+select extract(milliseconds from timestamp '2017-12-26 18:45:32');
+select extract(minute from timestamp '2017-12-26 18:45:32');
+select extract(month from timestamp '2017-12-26 18:45:32');
+select extract(quarter from timestamp '2017-12-26 18:45:32');
+select extract(second from timestamp '2017-12-26 18:45:32');
+select extract(week from timestamp '2017-12-26 18:45:32');
+
+-- isfinite(date), isfinite(timestamp), isfinite(interval)
+select isfinite(date '2017-12-26');
+select isfinite(timestamp '2017-12-26 23:59:59');
+select isfinite(interval '5 hours 10 minutes');
+
+-- justify_days(interval), justify_hours(interval), justify_interval(interval)
+select justify_days(interval '35 days');
+select justify_days(interval '70 days');
+
+select justify_hours(interval '30 hours');
+select justify_hours(interval '100 hours');
+
+select justify_interval(interval '1 mon - 1 hour');
+select justify_interval(interval '1 day - 2 hour');
+
+---------------
+-- Functions (Stored Procedures)
+CREATE OR REPLACE FUNCTION totalRecords()
+RETURNS integer AS $total$
+DECLARE
+    total integer;
+BEGIN
+    SELECT count(*) into total 
+        FROM company;
+    RETURN total;
+END;
+$total$ LANGUAGE plpgsql;
+
+select totalRecords();
+
+
+---------------------
+-- Built-In Functions, Aggregate Functions
+---------------------
+
+-- COUNT function
+select * from company;
+select count(*) as tot_cnt from company;
+select count(*) as cnt from company where name = 'Paul';
+
+-- MAX function
+select max(salary) as max_salary from company;
+select name, max(salary) from company group by name;
+
+-- MIN function
+select min(salary) as min_salary, max(salary) as max_salary from company;
+select name, min(salary) from company group by name;
+
+-- AVG function
+select avg(salary) as avg_salary, avg(age) as avg_age from company;
+select name, avg(salary) from company group by name;
+
+-- SUM function
+select sum(salary) from company;
+select name, sum(salary) as sum_salary from company group by name;
+
+-- ARRAY function : array_agg
+select * from company;
+
+select array_agg(salary) from company;
+select array_agg(salary) as array_salary, array_agg(age) as array_age from company;
+select name, array_agg(salary) from company group by name;
+
+
+--------------------
+-- Numeric functions
+
+-- abs(): absolute value
+select abs(-2);
+select abs(3);
+
+-- acos(X): arccosine of X, X must range between -1 and 1
+select acos(-1) as acos_n_1, acos(-0.5) as acos_n_05, acos(0) as acos_0, acos(0.5) as acos_05, acos(1) as acos_1;
+
+-- asin(X): arcsine of X, the value of X must range between -1 and 1
+select asin(-1) as asin_n_1, asin(-0.5) as asin_n_05, asin(0) as asin_0, asin(0.5) as asin_05, asin(1) as asin_1;
+
+-- atan(X): arctangent of X
+select atan(-1) as atan_n_1, atan(-0.5) as atan_n_05, atan(0) as atan_0, atan(0.5) as atan_05, atan(1) as atan_1;
+
+-- atan2(Y,X): returns the artangent of the two arguments: X and Y
+select atan2(3, 6);
+
+-- ceil(X) / ceiling(X): returns the smallest integer value that is not smaller than X
+select ceil(5.6);
+select ceiling(5.6);
+select ceiling(5.1);
+select ceil(-5.6);
+
+-- cos(X): the cosine of X. The value of X is given in radians
+select cos(0) as cos_0, cos(45) as cos_45, cos(90) as cos_90, cos(135) as cos_135, cos(180) as cos_180, cos(360) as cos_360;
+
+-- cot(X): the cotangent of X
+select cot(1);
+
+-- degrees(X): returns the value of X converted from radians to degrees
+select degrees(pi());
+select degrees(3.14159);
+
+-- exp(X): returns the value of e (the base of he natural logarithm) raised to the power of X
+select exp(3);
+
+-- floor(X): returns the largest integer value that is not greater than X
+select floor(5.6);
+select floor(-5.6);
+
+-- greatest(n1, n2, n3, ...): returns the greatest value in the set of input parameters (n1, n2, n3, and so on)
+select greatest(3, 5, 1, 4, -10, 99, 45, 38, 26, 97, 56, 55);
+
+-- least(n1, n2, n3, ...): returns the least-valued item from the value list(n1, n2, n3, and so on)
+select least(3, 5, 1, 4, -10, 99, 45, 38, 26, 97, 56, 55);
+
+-- log(x): returns the common logarithm of X
+select log(10) as log_10, log(45) as log_45;
+
+-- log(b, x): returns the logarithm of X for an arbitray base B
+select log(10, 1000);
+
+-- mod(n, m): returns the remainder of N divided by M
+select mod(10, 3);
+select mod(10, 2);
+
+-- pi(): returns the full double-precision value of pi
+select pi();
+
+-- pow(X, Y)/ power(X, Y): returns the value of X raised to the power of Y
+select power(2, 4);
+
+-- radians(X): returns the value of X, converted from degrees to radians
+select radians(45) as rad_deg_45, radians(90) as rad_deg_90, radians(180) as rad_deg_180, 
+       radians(270) as rad_deg_270, radians(360) as rad_deg_360;
+
+-- round(X)/ round(X, D): returns X rounded to the nearest integer. returns X rounded to D dicimal places
+select round(4.328466);
+select round(4.328466, 3);
+select round(-4.328466, 3);
+
+-- sign(X): returns the sign of X (negative, zero, or positive) as -1, 0, or 1
+select sign(-10) as sign_n_10, sign(0) as sign_0, sign(10) as sign_10;
+
+-- sin(X): returns the sine of X
+select sin(0) as sin_0, sin(90) as sin_90, sin(180) as sin_180, sin(270) as sin_270;
+
+-- sqrt(X): returns the non-negative square root of X
+select sqrt(100);
+
+-- tan(X): returns the tangent of the argument X
+select tan(45) as tan_45, tan(90) as tan_90, tan(180) as tan_180, tan(270) as tan_270;
+
+--------------------
+-- String Functions
+--------------------
+
+-- ascii(str): returns the numeric value of the leftmost character of the string str.
+select ascii('abc');
+select ascii('a');
+select ascii('123');
+select ascii('사랑');
+
+-- bit_length(str): returns the length of the string str in bits
+select bit_length('1');
+select bit_length('12');
+select bit_length('123');
+select bit_length('a');
+select bit_length('abc');
+
+-- char_length(str): returns the length of the string str, measured in character
+select char_length('abcd');
+select character_length('abcd');
+
+-- concat(str1, str2, ...): returns the string that results from concatenating the arguments
+select concat('I', 'Love', 'You');
+
+-- concat_ws(separator, str1, str2, ...): Concatenate With Separator
+select concat_ws('_', 'I', 'Love', 'You');
+
+-- left(str, len): returns the leftmost len characters from the string str, or NULL if any argument is NULL
+select left('I love seoul Korea', 8);
+
+-- length(str): returns the length of the string str, measured in bites
+select length('I love seoul');
+
+-- lower(str): returns the string str with all characters changed to lowercase
+select lower('December First');
+
+-- lpad(str, len, padstr): returns the string str, left-padded with the string padstr to a length of len characters.
+select lpad('abc', 6, 'cd_');
+select lpad('abc', 4, 'cd_'); -- if str is longer than len, the return value is shortened to len characters
+select lpad('abc', 8, 'cd_'); -- if str is shorter than len, the padstr is repeted
+
+-- ltrim(str): returns the string str with leading space characters removed
+select ltrim('     abcd');
+
+-- position(substr In str): 
+select position('cd' IN 'abcdefg');
+
+-- quote_ident(string text)
+select quote_ident('foo bar');
+select quote_literal(E'O\'Reilly');
+select quote_literal(42.5);
+select quote_nullable(42.5);
+
+-- REGEXP_MATCHES()
+select regexp_matches('abcdef', 'a%c%%');
+
+-- REGEXP_REPLACE()
+select regexp_replace('Thomas', '.[mN]a.', 'M');
+
+-- REGEXP_SPLIT_TO_ARRAY()
+select regexp_split_to_array('hello world', E'\\s+');
+
+-- REGEXP_SPLiT_TO_TABLE()
+select regexp_split_to_table('hello world', E'\\s+');
+
+-- repeat(str, count): returns a string consisting of the string str repeated count times
+select repeat('Seoul', 5);
+
+-- replace(str, from_str, to_str): returns the string str with all occurrences of the from_str replaced by the to_str
+select replace('hello world', 'hello', 'goodbye');
+
+-- reverse(str): returns the string str with the order of the characters reversed
+select reverse('abcd');
+
+-- right(str, len): returns the rightmost len characters from the string str
+select right('abcdefg', 2);
+select right('abcdefg', 10);
+
+-- rpad(str, len, padstr): returns the string str, right-padded with the string padstr to a length of len characters
+select rpad('hi', 5, '?');
+
+-- rtrim(str): returns the string str with trailing space character removed
+select rtrim('hello     ');
+
+-- substring(str, pos, len): returns a substring from string str starting at position pos with length of len
+select substring('abcdefghi', 4);
+select substr('abcdefghi', 4);
+select substring('abcdefghi' from 4);
+select substring('abcdefghi', 4, 2);
+select substr('abcdefghi', 4, 2);
+
+-- trim(): returns the string str with all remstr prefixes or suffixes removed
+select trim('    abc    ');
+select trim(leading 'x' from 'xxxabcxxx');
+select trim(trailing 'x' from 'xxxabcxxx');
+select trim(both 'x' from 'xxxabcxxx');
+
+-- upper(str): returns the string str with all characters changed to uppercase according to the current character set mapping
+select upper('hello');
+
